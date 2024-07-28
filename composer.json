@@ -2,6 +2,7 @@
   "name":"tuckdesign/add-watermark",
   "description": "Adds watermark to pdf or image",
   "license": "MIT",
+  "version": "0.1.0",
   "support": {
     "email": "contact@tuckdesign.com"
   },
