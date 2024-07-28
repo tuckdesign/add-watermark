@@ -119,7 +119,7 @@ class AddWatermark
 
     private function whatermarkIMG()
     {
-        $mpdfConfig = new Mpdf\Config\ConfigVariables();
+        $mpdfConfig = new \Mpdf\Config\ConfigVariables();
         $mpdfDefaults = $mpdfConfig->getDefaults();
         $fontFileFinder = new \Mpdf\Fonts\FontFileFinder($mpdfDefaults['fontDir']);
         try {
