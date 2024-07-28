@@ -1,0 +1,18 @@
+{
+  "_comment":"mz: basic version",
+  "description": "Adds watermark to pdf or image",
+  "license": "MIT",
+  "version": "0.1.0",
+  "support": {
+    "email": "contact@tuckdesign.com"
+  },
+  "require": {
+    "php":">=8.1",
+    "mpdf/mpdf": ">=v8.2.1"
+  },
+  "autoload": {
+    "classmap": [
+      "src"
+    ]
+  }
+}
