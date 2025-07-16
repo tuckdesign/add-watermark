@@ -7,7 +7,7 @@
   },
   "require": {
     "php":">=8.1",
-    "mpdf/mpdf": "^v8.2.1"
+    "mpdf/mpdf": "v8.2.1"
   },
   "autoload": {
     "classmap": [

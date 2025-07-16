@@ -2,6 +2,8 @@
 
 namespace tuckdesign;
 
+use setasign\Fpdi\PdfParser\PdfParserException;
+
 class AddWatermark
 {
     private $file = null;
@@ -80,27 +82,37 @@ class AddWatermark
         return $this->outfile;
     }
 
-    private function addWatermarkPDF()
+    private function addWatermarkPDF($afterRepair = false)
     {
-        $pdf = new \Mpdf\Mpdf();
-        $pages_count = $pdf->setSourceFile($this->file);
-        for ($i = 1; $i <= $pages_count; $i++) {
-            $pdf->AddPage();
-            $tplIdx = $pdf->importPage($i);
-            $size = $pdf->getTemplateSize($tplIdx);
-            $pdf->useTemplate($tplIdx, 0, 0, $size['width'], $size['height'], true);
-            $pdf->SetFont($this->fontName, 'B', $this->fontSize);
-            $pdf->SetTextColor($this->red, $this->green, $this->blue);
-            $x = $this->x;
-            $y = $this->y;
-            if ($x < 0) {
-                $x = $size['width'] + $x;
+        try {
+            $pdf = new \Mpdf\Mpdf();
+            $pages_count = $pdf->setSourceFile($this->file);
+            for ($i = 1; $i <= $pages_count; $i++) {
+                $pdf->AddPage();
+                $tplIdx = $pdf->importPage($i);
+                $size = $pdf->getTemplateSize($tplIdx);
+                $pdf->useTemplate($tplIdx, 0, 0, $size['width'], $size['height'], true);
+                $pdf->SetFont($this->fontName, 'B', $this->fontSize);
+                $pdf->SetTextColor($this->red, $this->green, $this->blue);
+                $x = $this->x;
+                $y = $this->y;
+                if ($x < 0) {
+                    $x = $size['width'] + $x;
+                }
+                if ($y < 0) {
+                    $y = $size['height'] + $y;
+                }
+                $this->oneWatermarkPDF($pdf, $x, $y);
+                $pdf->SetXY(25, 25);
             }
-            if ($y < 0) {
-                $y = $size['height'] + $y;
+        } catch (PdfParserException $e) {
+            if ($afterRepair) {
+                throw $e;
             }
-            $this->oneWatermarkPDF($pdf, $x, $y);
-            $pdf->SetXY(25, 25);
+            $temp_file = tempnam(sys_get_temp_dir(), 'pdffix_');
+            shell_exec('gs -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile='.$temp_file.' '.$this->file);
+            rename($temp_file, $this->file);
+            return $this->addWatermarkPDF(true);
         }
         $pdf->Output($this->outfile, \Mpdf\Output\Destination::FILE);
     }
